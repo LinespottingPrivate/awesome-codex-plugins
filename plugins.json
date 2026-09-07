@@ -444,7 +444,7 @@
       "url": "https://github.com/martinille/codex-tasklist",
       "owner": "martinille",
       "repo": "codex-tasklist",
-      "description": "A persistent per-session task list for Codex CLI with a live, scrollable panel in WezTerm.",
+      "description": "A persistent per-session task list for Codex CLI with a live, scrollable panel across terminals through native integrations or a launcher with tmux fallback.",
       "category": "Development & Workflow",
       "source": "awesome-codex-plugins",
       "install_url": "https://raw.githubusercontent.com/martinille/codex-tasklist/HEAD/plugins/codex-tasklist/.codex-plugin/plugin.json"

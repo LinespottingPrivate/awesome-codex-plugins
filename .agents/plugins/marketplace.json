@@ -652,7 +652,7 @@
         "authentication": "ON_INSTALL"
       },
       "category": "Development & Workflow",
-      "description": "A persistent per-session task list for Codex CLI with a live, scrollable panel in WezTerm.",
+      "description": "A persistent per-session task list for Codex CLI with a live, scrollable panel across terminals through native integrations or a launcher with tmux fallback.",
       "icon": "./plugins/martinille/codex-tasklist/assets/icon.svg"
     },
     {
