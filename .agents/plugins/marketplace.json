@@ -75,7 +75,7 @@
         "authentication": "ON_INSTALL"
       },
       "category": "Development & Workflow",
-      "description": "Real-time secret-leak guardrails for AI coding agents (Claude Code, Codex), Git hooks, and CI.",
+      "description": "Local-by-default, no-telemetry hooks block or mask secret leaks in Claude Code and Codex, with opt-in PII filtering and Git/CI backstops.",
       "icon": "./plugins/JeongJaeSoon/agent-guard/assets/icon.png"
     },
     {
@@ -639,6 +639,21 @@
       },
       "category": "Development & Workflow",
       "description": "Codex plugin and Skill that stages verified desktop skin packs from GitHub releases, validates files, and keeps restore guidance visible."
+    },
+    {
+      "name": "codex-tasklist",
+      "displayName": "Codex Tasklist",
+      "source": {
+        "source": "local",
+        "path": "./plugins/martinille/codex-tasklist"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Development & Workflow",
+      "description": "A persistent per-session task list for Codex CLI with a live, scrollable panel in WezTerm.",
+      "icon": "./plugins/martinille/codex-tasklist/assets/icon.svg"
     },
     {
       "name": "codex-tui-proof",
@@ -1452,7 +1467,7 @@
         "authentication": "ON_INSTALL"
       },
       "category": "Development & Workflow",
-      "description": "Spec-first workflow with nine skills, lightweight Quick / Hotfix / Tweak / Full paths, bounded three-attempt repair loops, auditable recovery commands, hardened delta-spec sync, and guarded review gates.",
+      "description": "Spec-first workflow with nine skills, lightweight Quick / Hotfix / Tweak / Full paths, bounded three-attempt repair loops with auditable adjudication recovery, hardened delta-spec sync, and guarded review gates.",
       "icon": "./plugins/MageByte-Zero/spec-superflow/assets/icon.svg"
     },
     {
@@ -1589,11 +1604,11 @@
       "description": "Role-based team delivery framework — Tech Lead-orchestrated 8-role system with 195+ skills, 27 specialist agents, 80+ commands, hooks, and ECC harness for Claude Code, Codex, and OpenCode."
     },
     {
-      "name": "tmcra-local-memory",
+      "name": "tmcra-memory",
       "displayName": "TMCRA Local Memory",
       "source": {
         "source": "local",
-        "path": "./plugins/reshuibuduo/TMCRA-Codex-Memory"
+        "path": "./plugins/reshuibuduo/tmcra-plugin-codex"
       },
       "policy": {
         "installation": "AVAILABLE",
@@ -1601,7 +1616,7 @@
       },
       "category": "Development & Workflow",
       "description": "Owner-local memory for Codex that recalls user and project evidence before each answer and carries source-attributed project context across sessions and supported agent tools.",
-      "icon": "./plugins/reshuibuduo/TMCRA-Codex-Memory/assets/icon.png"
+      "icon": "./plugins/reshuibuduo/tmcra-plugin-codex/assets/icon.png"
     },
     {
       "name": "tnt-house-risk-data-api",
@@ -2043,6 +2058,21 @@
       "category": "Tools & Integrations",
       "description": "Decode VINs, license plates, market value, vehicle history, recalls, liens, OBD codes, and more via the CarsXE API.",
       "icon": "./plugins/carsxe/carsxe-codex-plugin/assets/logo.png"
+    },
+    {
+      "name": "centricmem-skill",
+      "displayName": "CentricMem",
+      "source": {
+        "source": "local",
+        "path": "./plugins/zeyu-j/centricmem-skill"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Tools & Integrations",
+      "description": "Hosted librarian for agent Markdown memory via host MCP.",
+      "icon": "./plugins/zeyu-j/centricmem-skill/assets/icon.svg"
     },
     {
       "name": "chrome-devtools",
@@ -2674,7 +2704,7 @@
         "authentication": "ON_INSTALL"
       },
       "category": "Tools & Integrations",
-      "description": "Create and drive plori cloud agents (each an AI agent on its own cloud computer) over plori's remote MCP server, with OAuth auto-discovery."
+      "description": "Create and drive plori AI agents in persistent cloud environments over remote MCP, with OAuth auto-discovery and a bundled Agent Skill."
     },
     {
       "name": "prompt-to-asset",
@@ -2794,7 +2824,7 @@
       "icon": "./plugins/ScrapeGraphAI/just-scrape/assets/icon.svg"
     },
     {
-      "name": "seo-dungeon",
+      "name": "legends-seo-dungeon",
       "displayName": "SEO Dungeon",
       "source": {
         "source": "local",
@@ -2805,8 +2835,7 @@
         "authentication": "ON_INSTALL"
       },
       "category": "Tools & Integrations",
-      "description": "Gamified local SEO audits that turn website issues into 16-bit dungeon battles for Codex, Claude, and Gemini CLI workflows.",
-      "icon": "./plugins/avalonreset/seo-dungeon/assets/icon.svg"
+      "description": "Gamified local SEO audits that turn website issues into 16-bit dungeon battles for Codex, Claude, and Gemini CLI workflows."
     },
     {
       "name": "shots",
@@ -3057,6 +3086,21 @@
       },
       "category": "Tools & Integrations",
       "description": "Push events from GitHub, Gmail, Slack, and any signed webhook (Linear, Sentry, ClickUp) straight into your Codex threads as new turns — event-driven triggers instead of polling, with HMAC verification, deduplication, and a durable delivery queue."
+    },
+    {
+      "name": "wavespeed-cli",
+      "displayName": "WaveSpeed",
+      "source": {
+        "source": "local",
+        "path": "./plugins/WaveSpeedAI/codex-plugin-wavespeed-cli"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Tools & Integrations",
+      "description": "Generate and edit AI images, video, audio, and 3D on the WaveSpeed platform with a bundled MCP server and CLI skill, including live catalog search, local-file upload, and price quotes before running.",
+      "icon": "./plugins/WaveSpeedAI/codex-plugin-wavespeed-cli/assets/icon.png"
     },
     {
       "name": "x-skills",

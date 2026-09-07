@@ -1,6 +1,6 @@
 # 🐙 Claude Octopus
 
-Every AI model has blind spots. Claude Octopus supports ten external provider integrations — Codex, Antigravity CLI, Copilot, Qwen, Ollama, Perplexity, OpenRouter, OrcaRouter, OpenCode, and Grok — alongside the built-in Claude Code host, with consensus gates that flag disagreements before you ship.
+Every AI model has blind spots. Claude Octopus supports twelve external provider integrations — Codex, Antigravity CLI, Copilot, Qwen, Ollama, Perplexity, OpenRouter, OrcaRouter, OpenCode, Cursor CLI, Grok, and Kimi Code — alongside the built-in Claude Code host, with consensus gates that flag disagreements before you ship.
 
 **Claude-native first, Octopus for escalation.** Use Claude-native `/init`, `/review`, and `/security-review` when Claude is enough. Use Octopus when you want multiple model opinions, adversarial review, or stricter multi-LLM workflows.
 
@@ -13,39 +13,52 @@ Every AI model has blind spots. Claude Octopus supports ten external provider in
 <p align="center">
   <a href="https://claude.ai"><img src="https://img.shields.io/badge/Claude-Built_with_AI-c96442?logo=data:image/svg%2bxml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZmlsbD0iI2ZmZiIgZD0iTTEyIDJhMTAgMTAgMCAxIDAgMCAyMCAxMCAxMCAwIDAgMCAwLTIwbTAgMS44YTEuMiAxLjIgMCAwIDEgLjg1LjM1bDEuNSA0LjVhLjYuNiAwIDAgMCAuMzUuMzVsNC41IDEuNWExLjIgMS4yIDAgMCAxIDAgMi4yN2wtNC41IDEuNWEuNi42IDAgMCAwLS4zNS4zNWwtMS41IDQuNWExLjIgMS4yIDAgMCAxLTIuMjcgMGwtMS41LTQuNWEuNi42IDAgMCAwLS4zNS0uMzVsLTQuNS0xLjVhMS4yIDEuMiAwIDAgMSAwLTIuMjdsNC41LTEuNWEuNi42IDAgMCAwIC4zNS0uMzVsMS41LTQuNUExLjIgMS4yIDAgMCAxIDEyIDMuOCIvPjwvc3ZnPg==&labelColor=333" alt="Built with Claude"></a>
   <a href="https://github.com/nyldn/claude-octopus/actions/workflows/test.yml"><img src="https://github.com/nyldn/claude-octopus/actions/workflows/test.yml/badge.svg" alt="Tests"></a>
-  <img src="https://img.shields.io/badge/Version-10.1.0-blue" alt="Version 10.1.0">
+  <img src="https://img.shields.io/badge/Version-11.2.0-blue" alt="Version 11.2.0">
   <img src="https://img.shields.io/badge/Claude_Code-v2.1.14+_required-blueviolet" alt="Requires Claude Code v2.1.14+">
   <img src="https://img.shields.io/badge/License-MIT-green" alt="MIT License">
 </p>
 
-🐙 **Research, build, review, and ship — with ten external providers checking the host's work.** Claude-native handles the ordinary path. Octopus remains dormant until you explicitly run `/octo:*`, then handles the escalated path. A 75% consensus gate catches disagreements before they reach production.
+🐙 **Research, build, review, and ship — with twelve external providers checking the host's work.** Claude-native handles the ordinary path. Octopus remains dormant until you explicitly run `/octo:*`, then handles the escalated path. A 75% consensus gate catches disagreements before they reach production.
 
 🧠 **Remembers across sessions.** Integrates with [claude-mem](https://github.com/thedotmack/claude-mem) and [agentmemory](https://github.com/rohitg00/agentmemory) for persistent memory — past decisions, research, and context survive session boundaries.
 
 ⚡ **Spec in, software out.** Dark Factory mode takes a spec and autonomously runs the full pipeline — research, define, develop, deliver. You review the output, not every step.
 
-🔄 **Four-phase methodology, not just tools.** Every task moves through Discover → Define → Develop → Deliver, with quality gates between phases. Other orchestrators give you infrastructure. Octopus gives you the workflows.
+🔄 **Choose the workflow the task needs.** Use a focused method for architecture, debugging, or TDD. Use `/octo:embrace` for Discover → Define → Develop → Deliver, with quality gates between phases.
 
-🐙 **31 specialized personas** (role-specific AI agents like security-auditor, backend-architect), **53 commands** (slash commands you type), **62 skills** (reusable workflow modules). Explicit workflows select the experts they need; ordinary Claude requests do not activate Octopus.
+🐙 **31 specialized personas** (role-specific AI agents like security-auditor, backend-architect), **53 commands** (slash commands you type), **63 skills** (reusable workflow modules). Explicit workflows select the experts they need; ordinary Claude requests do not activate Octopus.
 
-🐙 **Works with just Claude. Adds up to ten external provider integrations.** Zero external providers are needed to start. Add them one at a time — each becomes available when detected and runs only inside an explicit workflow.
+🐙 **Works with just Claude. Adds up to twelve external provider integrations.** Zero external providers are needed to start. Add them one at a time — each becomes available when detected and runs only inside an explicit workflow.
 
-💰 **Four providers cost nothing extra when you already have access.** Codex, Antigravity CLI, and Copilot use existing subscriptions or local auth. Ollama runs locally for free. Qwen now requires API-key or Coding-Plan auth; its free OAuth tier ended on 2026-04-15.
+💰 **Five providers cost nothing extra when you already have access.** Codex, Antigravity CLI, Copilot, and Cursor CLI use existing subscriptions or local auth. Ollama runs locally for free. Qwen now requires API-key or Coding-Plan auth; its free OAuth tier ended on 2026-04-15.
 
 ---
 
 ## What's New
 
+### Engineering methods
+
+Version 11.2.0 added eight engineering methods adapted from
+[Matt Pocock's skills](THIRD_PARTY_NOTICES.md). Routine architecture, TDD, and
+debugging use your current host. Ask for an independent opinion when a reviewer
+would help. Plans capture domain terms and blocking decisions, compare interface
+designs, and can propose a time-limited prototype.
+
+Setup can resume an interrupted configuration and rechecks readiness before
+reporting success. See [workflow methods](docs/WORKFLOW-METHODS.md)
+for usage and [the changelog](CHANGELOG.md) for release details.
+
 <!-- BEGIN CURRENT RELEASE -->
-> 🆕 **v10.1.0 — Simplify setup, provider readiness, dispatch controls, cost reporting, and uninstall guidance.**
+> 🆕 **v11.2.0 — Method-aware workflows, clearer independent review escalation, and bounded engineering prototypes.**
 >
-> **Default roster:** Claude Opus 5 leads architecture, planning, security reasoning, and final judgment; GPT-5.6 Sol is the independent implementation/review peer; Claude Sonnet 5 is the standard Claude seat; Fable 5 remains an opt-in judgment escalation. Existing model pins and provider configuration still win. See [the routing strategy](docs/MODEL-ROUTING-STRATEGY.md).
+> **Default roster:** Claude Opus 5 leads architecture, planning, security reasoning, and final judgment; GPT-5.6 Sol is the independent implementation/review peer; Claude Sonnet 5 is the standard Claude seat; Fable 5.1 remains an opt-in judgment escalation. Existing model pins and provider configuration still win. See [the routing strategy](docs/MODEL-ROUTING-STRATEGY.md).
 <!-- END CURRENT RELEASE -->
 >
 > ```bash
 > /octo:model-config                         # inspect or override the frontier roster
 > OCTOPUS_OPUS5_AUTO_XHIGH=1                 # opt in to automatic xhigh Opus 5 phases
-> OCTOPUS_OPUS_MODEL=claude-fable-5          # explicitly opt in to Fable 5
+> OCTOPUS_OPUS_MODEL=claude-fable-5-1        # explicitly opt in to Fable 5.1
+> OCTOPUS_CODEX_MODEL=gpt-6-astra            # explicitly opt in to Astra
 > ```
 
 > 🆕 **v9.41 — Multi-LLM Council.** `/octo:council` runs a structured 3/5/7-persona deliberation across Claude, Codex, Antigravity, and OpenCode with goal modes (`advice`, `decision`, `plan`, `implement`, `review`), styles (`balanced`, `adversarial`, `red-team`, `executive`, `implementation`), benchmark-aware role routing, quorum + critical-veto gates, budget caps, and gated worktree handoff for approved plans. Use it when one model's opinion isn't enough.
@@ -57,7 +70,7 @@ Every AI model has blind spots. Claude Octopus supports ten external provider in
 
 | Version | Best Features |
 |---------|--------------|
-| **v10.1.0** (new) | Simplify setup, provider readiness, dispatch controls, cost reporting, and uninstall guidance. |
+| **v11.2.0** (new) | Method-aware workflows, clearer independent review escalation, and bounded engineering prototypes. |
 | **v9.50** | **Claude Code 2026 compatibility layer** — routines manifest (schedule + GitHub-event automations), SubagentStop quality/cost gate, `/octo:usage` cost attribution, `worktree.bgIsolation` opt-out, Claude Agent SDK seat (introduced with Opus 4.8 and now following the current Opus 5 default), starter skills pack, `/plugin browse` manifest with projected context cost. |
 | **v9.41** | **`/octo:council`** promoted to first-class workflow — structured multi-LLM deliberation with goal modes, adversarial/red-team styles, benchmark-aware persona routing, quorum and critical-veto gates, budget preflight, and gated worktree handoff for approved implementation plans. |
 | **v9** | Up to 10 external provider integrations (Codex, Antigravity CLI, Copilot, Qwen, Ollama, Perplexity, OpenRouter, OrcaRouter, OpenCode, and Grok) alongside the Claude Code host. Structured provider debates and configurable multi-LLM councils. Explicit-only activation by default, with an optional smart router. Agent summary tables show which providers actually contributed. Provider-aware prompt preflight prevents silent oversize failures. Research breadth modes fan out light, standard, or exhaustive investigations. Setup aliases and fuzzy `/octo:*` corrections reduce command friction. Opt-in discipline gates and token compression. Two-stage review. Circuit breakers with automatic provider recovery inside active workflows. Cursor + OpenCode + Codex cross-compatibility. `bin/octopus` CLI. 182 Claude Code capability flags through v2.1.219, including Opus 5, Sonnet 5, and dynamic workflow awareness. |
@@ -87,7 +100,7 @@ rollback details.
 - Current fresh configurations use **GPT-5.6 Sol** for Codex implementation/review, **Claude Opus 5** for premium Claude work, and **Claude Sonnet 5** for the standard Claude seat. Existing environment, session, and `providers.json` pins remain unchanged; `OCTOPUS_LEGACY_ROLES=1` restores the pre-frontier role mapping.
 <!-- END CURRENT MODEL DEFAULTS -->
 - New claude-sdk seat env vars (v9.50): `CLAUDE_SDK_API_KEY`, `OCTOPUS_CLAUDE_SDK_MODEL`, `OCTOPUS_CLAUDE_SDK_MAX_TOKENS`, `OCTOPUS_CLAUDE_SDK_ALLOWED_MODELS`, `OCTOPUS_CLAUDE_SDK_CONTEXT_BUDGET`.
-- New Fable 5 guard env vars (v9.51): `OCTOPUS_FABLE5_MODE` (auto/off/on), `OCTOPUS_FABLE5_NO_RETRY`. Guards auto-enable only when you pin `claude-fable-5`.
+- Fable guards apply to `claude-fable-5-1` and preserved `claude-fable-5` pins. `OCTOPUS_FABLE5_MAX_EFFORT` raises the default `high` ceiling without disabling the other guards.
 - Premium Claude role routing (architect, strategist, security-reviewer to Opus) landed in v9.29; restore the older mapping with `OCTOPUS_LEGACY_ROLES=1`.
 
 </details>
@@ -154,13 +167,21 @@ codex plugin add claude-octopus@nyldn-plugins
 
 Restart Codex. Skills appear automatically — invoke with `$skill-doctor`, `$skill-debug`, etc.
 
+See [plugin compatibility](docs/PLUGIN-COMPATIBILITY.md) for invocation policy,
+hook trust, and the distinction between local Codex support and public-directory
+submission.
+
 Codex owns the versioned cache. To refresh an existing installation without
-editing cache files or symlinks directly:
+editing cache files or symlinks directly, exit Codex and run these commands in
+a separate terminal:
 
 ```bash
 codex plugin marketplace upgrade nyldn-plugins
 codex plugin add claude-octopus@nyldn-plugins
 ```
+
+Restart Codex after the update. Replacing the cache from the session that is
+using it can leave hooks and skills bound to a removed version directory.
 
 </details>
 
@@ -188,7 +209,6 @@ cd ~/.cursor/claude-octopus/mcp-server && npm install
       "command": "npx",
       "args": ["tsx", "${userHome}/.cursor/claude-octopus/mcp-server/src/index.ts"],
       "env": {
-        "OCTO_CLAW_ENABLED": "true",
         "OPENAI_API_KEY": "${env:OPENAI_API_KEY}"
       }
     }
@@ -358,7 +378,7 @@ Nine high-traffic commands cover the common Octopus workflows: lifecycle executi
 
 `/octo:council` uses the real runner by default. Single-model simulation is only used when explicitly requested with `--simulate` or `--single-model`; `--research-first` writes a research artifact before fanout, and `--corpus-mode append|require` preserves synthesis and plans in project corpus workflows.
 
-Plus 40+ more: review, debug, extract, deck, docs, schedule, parallel, sentinel, optimize, brainstorm, claw, doctor, and [the full set](docs/COMMAND-REFERENCE.md).
+Plus 40+ more: review, debug, extract, deck, docs, schedule, parallel, sentinel, optimize, brainstorm, doctor, and [the full set](docs/COMMAND-REFERENCE.md).
 
 Don't remember the command name? Just describe what you need:
 
@@ -401,8 +421,8 @@ Or type `/octo:auto <what you want>` and the smart router picks for you. Plain-p
 
 | | Claude Code alone | [Superpowers](https://github.com/obra/superpowers) | Claude Octopus |
 |---|---|---|---|
-| **Core idea** | One model, your prompts | Structured methodology for one agent | Built-in Claude plus up to 10 external integrations cross-checking each other |
-| **Providers** | Claude only | Claude only | Claude host; Codex, Antigravity CLI, Copilot, Qwen, Ollama, Perplexity, OpenRouter, OpenCode, Grok |
+| **Core idea** | One model, your prompts | Structured methodology for one agent | Built-in Claude plus up to 12 external integrations cross-checking each other |
+| **Providers** | Claude only | Claude only | Claude host; Codex, Antigravity CLI, Copilot, Qwen, Ollama, Perplexity, OpenRouter, OrcaRouter, OpenCode, Cursor CLI, Grok, and Kimi Code |
 | **Workflow** | Ad-hoc | Spec → plan → subagent-driven dev | Discover → Define → Develop → Deliver (Double Diamond) |
 | **Strength** | Simple, no setup | Long autonomous runs with discipline | Multiple perspectives catching blind spots |
 | **Consensus gates** | No | No | Yes — 75% agreement threshold |
@@ -417,13 +437,28 @@ Or type `/octo:auto <what you want>` and the smart router picks for you. Plain-p
 
 ## How It Works
 
-### How 10 External Providers Work Together
+### Focused engineering methods
 
-Claude Octopus coordinates ten external provider integrations alongside the built-in Claude Code host. The optional `claude-sdk` route is a second Anthropic seat, so it is shown below but is not counted as a separate provider family.
+Architecture, TDD, and debugging now run on the current host by default. This
+keeps routine work fast and avoids a provider call that adds little value. Add
+an independent-review request when one bounded review would materially improve the
+decision. Explicit debate, council, and multi-model commands are unchanged.
+
+Planning can propose a time-boxed prototype for one risky assumption. Setup can
+resume an interrupted human login without treating old authentication evidence as
+current. Maintainers can also inspect policy or production provider selection with
+the offline routing preview. The preview never claims to verify the final model,
+entitlement, quota, fallback, or dispatch.
+
+See [Workflow methods](docs/WORKFLOW-METHODS.md) for the contracts and limits.
+
+### How 12 External Providers Work Together
+
+Claude Octopus coordinates twelve external provider integrations alongside the built-in Claude Code host. The optional `claude-sdk` route is a second Anthropic seat, so it is shown below but is not counted as a separate provider family.
 
 | Provider | Role |
 |----------|------|
-| 🔴 Codex (OpenAI, GPT-5.6 Sol/Terra/Luna) | Code review + implementation — edge-case hunting, terminal-heavy execution, patch/test loops |
+| 🔴 Codex (OpenAI, GPT-5.6 Sol/Terra/Luna; explicit GPT-6 Astra) | Code review + implementation — edge-case hunting, terminal-heavy execution, patch/test loops |
 | 🧭 Antigravity CLI (`agy`) | Google Antigravity perspective via native stdin print-mode dispatch |
 | 🟣 Perplexity | Live web search — CVE lookups, dependency research, current docs |
 | 🌐 OpenRouter | Alternative model routing — access 100+ models via single API |
@@ -432,13 +467,15 @@ Claude Octopus coordinates ten external provider integrations alongside the buil
 | 🟤 Qwen (Alibaba) | Qwen3-Coder research via API-key or Coding-Plan auth |
 | ⚫ Ollama (Local) | Zero-cost local LLM — offline, privacy-sensitive, fallback |
 | 🟠 OpenCode | Alternate coding-agent integration and cross-checking seat |
-| ⚡ Grok (xAI, via cursor-agent) | Frontier-model second opinion — added as a first-class seat in v9.48 |
+| 🟪 Cursor CLI (`agent`) | Cursor-subscription models (Composer, GPT-5.6, Claude, Gemini, Grok) as a council, review, and debate seat — read-only by default, `auto` model unless pinned |
+| ⚡ Grok (xAI, standalone `grok` CLI) | Frontier-model second opinion via `XAI_API_KEY` — added as a first-class seat in v9.48 |
+| 🌙 Kimi Code | Standalone coding-agent seat using provider credentials and model aliases from `config.toml` |
 | 🔵 Claude (Anthropic, Opus 5 + Sonnet 5) | Architecture, strategy, security review, orchestration, consensus, final synthesis |
 | 🔵 Claude Agent SDK seat (`claude-sdk`) | Optional second Anthropic seat: Opus 5 with the 1M-token context window, independent of the host session (set `CLAUDE_SDK_API_KEY`) |
 
 Explicit research-breadth, debate, council, and adversarial-review workflows use multiple providers. Generic mergeable work starts with one capable owner and adds another model only for a distinct job. A 75% consensus quality gate prevents questionable work from shipping. Only Claude is required — all others are optional and auto-detected.
 
-**Frontier routing** defaults `architect`, `strategist`, `security-reviewer`, and opt-in `implementer-heavy` to Opus 5 on Claude Code v2.1.219+, with Opus 4.8/4.7/4.6 fallbacks. `code-reviewer` and `implementer` use GPT-5.6 Sol; `synthesizer` uses Sonnet 5 on Claude Code v2.1.197+. Fable 5 remains an opt-in judgment escalation. Existing pins/configs win, and `OCTOPUS_LEGACY_ROLES=1` restores the v9.28 mapping. See [the routing strategy](docs/MODEL-ROUTING-STRATEGY.md).
+**Frontier routing** defaults `architect`, `strategist`, `security-reviewer`, and opt-in `implementer-heavy` to Opus 5 on Claude Code v2.1.219+, with Opus 4.8/4.7/4.6 fallbacks. `code-reviewer` and `implementer` use GPT-5.6 Sol; `synthesizer` uses Sonnet 5 on Claude Code v2.1.197+. Fable 5.1 and GPT-6 Astra are explicit-only escalations and never enter built-in tier defaults or fallback chains. Existing pins/configs win, and `OCTOPUS_LEGACY_ROLES=1` restores the v9.28 mapping. See [the routing strategy](docs/MODEL-ROUTING-STRATEGY.md).
 
 **Native dynamic workflows:** Claude Code v2.1.154+ can run native dynamic workflows for huge single-Claude migrations. Use that path when one Claude workflow is enough; use Octopus when you need multi-provider disagreement, councils, adversarial review, external model validation, or blind-spot coverage.
 
@@ -461,7 +498,7 @@ Specialized agents selected by explicit Octopus workflows. `/octo:security` can 
 
 Categories span Software Engineering, Specialized Development, Documentation & Communication, Research & Strategy, Business & Compliance, and Creative & Design.
 
-[Full persona reference](docs/AGENTS.md) | [All 62 skills](docs/COMMAND-REFERENCE.md)
+[Full persona reference](docs/AGENTS.md) | [All 63 skills](docs/COMMAND-REFERENCE.md)
 
 ### Built-in Reaction Engine
 
@@ -509,9 +546,9 @@ OAuth users pay nothing beyond their existing subscriptions. Qwen is the excepti
 
 ### What a Typical Run Costs
 
-Illustrative token-only estimates, using standard global API rates checked **2026-07-27**: [GPT-5.6 Sol](https://developers.openai.com/api/docs/models/gpt-5.6-sol) $5/$30, [Sonar Pro](https://docs.perplexity.ai/docs/getting-started/pricing) $3/$15, and [Opus 5](https://platform.claude.com/docs/en/about-claude/models/choosing-a-model) $5/$25 per million input/output tokens. The ranges assume roughly 90% input and 10% output tokens, standard (not batch, flex, priority, or fast) processing, no cache discounts, and a representative mix of those models. OAuth/subscription seats (Codex via ChatGPT, Antigravity, Copilot) bill nothing extra; Ollama is free.
+Illustrative token-only estimates, using standard global API rates checked **2026-09-04**: [GPT-5.6 Sol](https://developers.openai.com/api/docs/models/gpt-5.6-sol) $4/$20, [Sonar Pro](https://docs.perplexity.ai/docs/getting-started/pricing) $3/$15, and [Opus 5](https://platform.claude.com/docs/en/about-claude/models/choosing-a-model) $5/$25 per million input/output tokens. The ranges assume roughly 90% input and 10% output tokens, standard (not batch, flex, priority, or fast) processing, no cache discounts, and a representative mix of those models. OAuth/subscription seats (Codex via ChatGPT, Antigravity, Copilot) bill nothing extra; Ollama is free.
 
-The table excludes provider tool charges. Sonar Pro adds a **request fee** of $6-$14 per 1,000 requests depending on search-context size. Long-context and provider-specific rate rules can push large runs above these bounds, so check the linked rate cards before material spend.
+The table excludes provider tool charges. Sonar Pro adds a **request fee** of $6-$14 per 1,000 requests depending on search-context size. Fable 5.1 and GPT-6 Astra each cost $10/$50 per million input/output tokens. Astra requests above 272K input tokens apply OpenAI's long-context multipliers to the whole request. Long-context and provider-specific rate rules can push large runs above these bounds, so check the linked rate cards before material spend.
 
 | Run | Typical volume | Illustrative API token cost (tool fees excluded) |
 |-----|----------------|-----------------------------------------------|
@@ -555,12 +592,18 @@ v9.50.0 aligns the plugin with Claude Code's 2026 native capabilities. Each piec
 
 ---
 
-## Fable 5 Support
+## GPT-6 Astra Support
 
-v9.51.0 added first-class support for Claude Fable 5 (Anthropic's Mythos-class model, $10/$50 per MTok — 2x Opus 5). Fable 5 is never auto-selected; pin it with `OCTOPUS_OPUS_MODEL=claude-fable-5` (opus seats) or `OCTOPUS_CLAUDE_SDK_MODEL=claude-fable-5` (the 1M-context SDK seat). When a pin is detected, the plugin auto-enables three guards and prints a one-line banner:
+GPT-6 Astra is cataloged as an explicit-only premium model at $10/$50 per MTok. Use `OCTOPUS_CODEX_MODEL=gpt-6-astra` or an exact `codex:gpt-6-astra` seat only after GPT-5.6 Sol fails a hard acceptance test or a project eval shows a material gain. Astra is never selected by built-in defaults, cost tiers, review fleets, or fallback chains, and Astra plus GPT-5.6 does not provide vendor diversity.
 
-- **Security reroute** — security-audit dispatches (security-auditor persona, squeeze red/blue workflow) run on Opus 5 instead of Fable 5, whose safety classifiers can refuse adversarial security phrasing even in authorized audits.
-- **Effort clamp** — `xhigh`/`max` effort clamps to `high` for Fable dispatches. Fable 5 effort applies per tool call; higher settings widen scope at 2x cost without extending runs.
+Codex CLI v0.153.1 or newer is required; unknown versions fail closed. The generic OpenAI-compatible adapter uses Chat Completions, so it rejects tool-enabled Astra dispatches until that adapter supports the Responses API. No-tool review prompts remain available. Astra's initial rollout is limited, and requests above 272K input tokens incur OpenAI's long-context multipliers.
+
+## Fable 5.1 Support
+
+Claude Fable 5.1 is an explicit-only Mythos-class model at $10/$50 per MTok, twice the price of Opus 5. Pin it with `OCTOPUS_OPUS_MODEL=claude-fable-5-1` (opus seats) or `OCTOPUS_CLAUDE_SDK_MODEL=claude-fable-5-1` (the 1M-context SDK seat). Host-seat pins require Claude Code v2.1.255 or newer to recognize Fable 5.1 and its 1M context window. The independent `claude-agent` SDK path has no Claude Code version floor; it requires `CLAUDE_SDK_API_KEY` and the `claude-agent` executable. If the SDK shim falls back to the headless `claude` CLI, that executable must also be v2.1.255 or newer. Existing `claude-fable-5` pins remain exact and supported. Opt-in escalation is limited to one Fable 5.1 dispatch per command. When either model is selected, the plugin enables three guards and prints a one-line banner:
+
+- **Security reroute** — by default, security-audit dispatches for ordinary Fable pins (security-auditor persona, squeeze red/blue workflow) run on Opus 5 because Fable can refuse adversarial security phrasing even in authorized audits. Exact model-qualified Fable security seats fail closed.
+- **Effort clamp** — `xhigh`/`max` effort clamps to `high` by default. Set `OCTOPUS_FABLE5_MAX_EFFORT=xhigh|max` for one bounded high-value run without disabling the other guards.
 - **Refusal retry** — a refused or empty Fable 5 dispatch on the `claude-sdk` seat retries once on Opus 5 instead of failing the seat.
 
 A SessionStart hook injects the dispatch profile (prompt anti-patterns, judgment routing, risk-surface escalation) whenever a pin is active. Full guidance: `skills/blocks/fable5-prompting.md`.
@@ -572,6 +615,7 @@ A SessionStart hook injects the dispatch profile (prompt anti-patterns, judgment
 | `OCTOPUS_FABLE5_MODE` | `auto` | `off` disables all Fable 5 guards; `on` forces them without a pin |
 | `OCTOPUS_FABLE5_NO_RETRY` | unset | Set `1` to disable the refusal retry on the `claude-sdk` seat |
 | `OCTOPUS_FABLE5_FALLBACK_MODEL` | `claude-opus-5` | Override the Fable security/refusal fallback |
+| `OCTOPUS_FABLE5_MAX_EFFORT` | `high` | Highest Fable effort allowed: `high`, `xhigh`, or `max` |
 
 ---
 
@@ -589,43 +633,31 @@ A SessionStart hook injects the dispatch profile (prompt anti-patterns, judgment
 
 ---
 
-## Works With OpenClaw
-
-Claude Octopus ships with a compatibility layer for [OpenClaw](https://github.com/openclaw/openclaw), the open-source AI assistant framework. This lets you expose Octopus workflows to messaging platforms (Telegram, Discord, Signal, WhatsApp) without modifying the Claude Code plugin.
+## MCP Server
 
 ### Architecture
 
-```
-Claude Code Plugin (unchanged)
-  └── .mcp.json ─── MCP Server ─── orchestrate.sh
-                                        ↑
-OpenClaw Extension ─────────────────────┘
+```text
+MCP Client ─── MCP Server ─── orchestrate.sh ─── provider CLIs and APIs
 ```
 
-Three components, zero changes to the core plugin:
+The standalone MCP server exposes Claude Octopus workflows to compatible IDEs
+and clients without changing the Claude Code plugin.
 
 | Component | Location | Purpose |
 |-----------|----------|---------|
-| MCP Server | `mcp-server/` | Exposes 10 Octopus tools via Model Context Protocol |
-| OpenClaw Extension | `openclaw/` | Wraps workflows for OpenClaw's extension API |
-| Skill Schema | `mcp-server/src/schema/skill-schema.json` | Universal skill metadata format |
+| MCP Server | `mcp-server/` | Exposes 12 Octopus tools via Model Context Protocol |
+| Skill Schema | `mcp-server/src/schema/skill-schema.json` | Shared skill metadata format |
 
-### MCP Server
-
-The MCP server is **opt-in** — it does not start automatically. This prevents a permanent `✘ failed` status in Claude Code's `/mcp` panel for users who don't need it.
-
-To enable it, add the server to your project's `.mcp.json` or global Claude Code settings:
+Add the server to your project's MCP configuration or global client settings:
 
 ```json
 {
   "mcpServers": {
-    "octo-claw": {
+    "claude-octopus": {
       "command": "node",
       "args": ["--require", "./mcp-server/check-node-version.js", "./mcp-server/dist/index.js"],
-      "cwd": "<path-to-claude-octopus>",
-      "env": {
-        "OCTO_CLAW_ENABLED": "true"
-      }
+      "cwd": "<path-to-claude-octopus>"
     }
   }
 }
@@ -636,33 +668,14 @@ Once enabled, it exposes:
 - `octopus_discover`, `octopus_define`, `octopus_develop`, `octopus_deliver` — Individual phases
 - `octopus_embrace` — Full Double Diamond workflow
 - `octopus_debate`, `octopus_council`, `octopus_review`, `octopus_security` — Specialized workflows
+- `octopus_set_editor_context` — IDE editor-state context
 - `octopus_list_skills`, `octopus_status` — Introspection
 
 Any MCP-compatible client can connect to the server.
 
-### OpenClaw Extension
-
-Install in an OpenClaw instance from git:
-
-```bash
-npm install github:nyldn/claude-octopus#main --prefix openclaw
-```
-
-Or clone and link locally:
-
-```bash
-cd openclaw && npm install && npm run build
-```
-
-The extension registers as an OpenClaw plugin with configurable workflows, autonomy modes, and Claude Code path resolution.
-
-### Build & Validate
-
-```bash
-./scripts/build-openclaw.sh          # Regenerate skill registry from frontmatter
-./scripts/build-openclaw.sh --check  # CI mode — exits non-zero if out of sync
-./tests/validate-openclaw.sh         # 13-check validation suite
-```
+In v11, workflow tools and status require an absolute `project_root` for each
+call. See [the migration guide](docs/MIGRATING-V11.md) before updating an
+existing MCP integration.
 
 ---
 
@@ -676,6 +689,9 @@ No. Its commands are namespaced under the `octo` prefix, and results are stored 
 
 **What happens if a provider times out?**
 The workflow continues with available providers. You'll see the status in the visual indicators.
+
+**Can bounded Tangle implementation run on macOS?**
+Not currently. Bounded Tangle dispatch is fail-closed and requires Linux with a working Bubblewrap (`bwrap`) execution boundary. On macOS, Tangle refuses provider dispatch with an explicit operator error rather than falling back to unconfined execution.
 
 **Why "octopus"?**
 🐙 *Fun fact: a real octopus has three hearts, blue blood, and 500 million neurons — two-thirds of which live in its eight arms.* Each arm can taste, touch, and act independently. Claude Octopus works the same way: each tentacle (command) operates autonomously with its own squeeze of logic, then ink flows back as the final deliverable. The crossfire review? That's the squeeze — adversarial pressure that untangles everything before it ships.
@@ -719,6 +735,11 @@ See [CONTRIBUTING.md](docs/CONTRIBUTING.md) for details.
 ---
 
 ## Attribution
+
+Selected workflow methods adapt patterns from
+[mattpocock/skills](https://github.com/mattpocock/skills) under the MIT License.
+The distribution includes the complete license and a source-to-destination map in
+[Third-party notices](THIRD_PARTY_NOTICES.md).
 
 - **[wolverin0/claude-skills](https://github.com/wolverin0/claude-skills)** — AI Debate Hub. MIT License.
 - **[obra/superpowers](https://github.com/obra/superpowers)** — Discipline skills patterns, verification-before-completion philosophy, two-stage review approach, and review response patterns. MIT License.

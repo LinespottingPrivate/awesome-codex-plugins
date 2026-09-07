@@ -6,9 +6,13 @@
 
 English | [한국어](README.ko.md) | [简体中文](README.zh-CN.md)
 
-> Keep proof in sync with the code.
+> Keep work inside the approved boundary, and keep valid verification reusable.
 
-Click gives coding agents **revision-aware evidence**: test and verification results that stay attached to the code they actually checked.
+Click provides incremental verification for coding agents. It helps constrain unrequested scope expansion through a reviewed Guarded contract, while **revision-aware evidence** lets valid checks survive a new task. Reuse requires matching execution bindings and, after changes, a complete dependency observation or an explicit policy committed before the baseline. Missing authority means a real rerun, not automatic dependency inference.
+
+Release note: v0.90.0 adds continuous, cost-gated unittest/pytest shard setup, bounded inspection-result caching, and fail-closed native observer profiles.
+
+Click does not prove that the code is correct or that the selected tests are sufficient. It tracks whether existing verification evidence still applies to the current code.
 
 You keep working normally. Click remembers:
 
@@ -56,23 +60,24 @@ execution_authority: host
 
 Use Guarded for payments, authentication, deletion, migrations, public API changes, or any task where changing the wrong thing would matter.
 
-The approval view is written for people:
+The approval view starts with one plain-language contract, not a list of developer fields. For example:
 
 ~~~text
-Goal
-What should be true when the task is done?
-
-Changes
-What may change?
-
-Unchanged
-What must remain compatible or untouched?
-
-Completion checks
-How will the result be verified?
+Revision 12 changed src/auth/token.py.
+The authentication tests that used this file are affected.
+The previous result is now stale, so those tests must run again.
+Click will record the changed revision, the affected check, why the old result became stale, and the completion checks.
+It only displays this information; the contract excludes test-skipping authority, UI work, and external transmission.
+In short: this builds the safe data layer that a future Evidence Map can read.
 ~~~
 
-The raw JSON contract is optional technical detail. Approval happens in a later user turn, and work inside the approved boundary continues without repeated approval prompts.
+The original canonical JSON stays hidden unless the user requests the original contract. Viewing it keeps the same contract id and does not approve, change, or restage anything. The approval prompt is equivalent to:
+
+> The contract above is explained in plain language. Do you approve it as written, or would you like to see the original contract first?
+
+Approve, request changes, cancel, and view original are all available. Approval happens in a later user turn, and work inside the approved boundary continues without repeated approval prompts.
+
+After A completes, B receives a **new contract id and separate approval**. A's successful checks are candidates only: B must request and requalify them. Unrelated code can permit partial reuse under an unchanged precommitted policy; related inputs, changed environment, and new checks run. Approval, runner tokens, unfinished work, and completion do not transfer. The Hook does not semantically prove that every implementation stayed in scope.
 
 ## Install
 
@@ -105,7 +110,7 @@ Or explicitly choose Guarded:
 
 ## Update
 
-Current release: **v0.50.0**
+Current release: **v0.90.0**
 
 ~~~bash
 codex plugin marketplace upgrade click
@@ -128,13 +133,106 @@ A result is reused only when its important bindings still match, such as:
 
 If Click cannot establish that match, it runs the check again.
 
-Cross-revision reuse is intentionally conservative. Evidence mode uses a committed dependency map:
+Cross-revision reuse is intentionally conservative. A repository can commit a dependency map:
 
 ~~~text
 .click/evidence-dependencies.json
 ~~~
 
-The map says which files can invalidate a specific check. It is optional; leaving it out simply means that the check runs again after a mutation.
+The map declares candidate inputs for a specific check, and concrete paths
+remain hard dependencies. It does not authorize reuse by itself. In an approved
+Guarded contract, an explicitly enabled authoritative run may refine expanding
+patterns such as `*`, `**`, and directory prefixes to the inputs that the check
+actually consumed. Click hashes every resulting input into the receipt.
+Working-tree edits cannot narrow the committed policy. If observation is
+unavailable or incomplete, Click runs the check again after a mutation. The map
+remains optional; leaving it out also means that the check reruns.
+
+For common changes that are known not to affect a check, such as documentation,
+the repository may instead commit an observer-free safe-change policy:
+
+~~~json
+{
+  "version": 1,
+  "entries": [
+    {
+      "checks": [["python3", "-m", "pytest", "tests/unit"]],
+      "reuse_if_only_changed": ["README.md", "docs/**"]
+    }
+  ]
+}
+~~~
+
+Save it as `.click/evidence-reuse.json`. After a successful baseline, Click
+records the Git commit plus compact fingerprints for effective uncommitted
+files. Before the same exact check runs again, it reports the net changed paths.
+It reuses the result only when every path matches the unchanged committed policy;
+any unlisted path, policy edit, Git ambiguity, environment or executable change,
+or later workspace drift runs the real check. Policy files cannot declare
+themselves safe. This path uses only Git and the plugin's Python runtime, so it
+does not require a platform-specific observer or another installation on Linux,
+macOS, or Windows. The declaration is repository-owner policy, not an inferred
+claim that Click discovered every dependency.
+A committed [Evidence Shards map](skills/click/references/evidence-shards-v1.md) can split one exact broad suite into independent children, retaining a passed sibling after another fails. The map alone never permits reuse after a mutation; the rules above still decide each child, and an invalid map runs the original suite.
+
+For a supported project, `click-gate sharding init`, `sharding status`, and
+`sharding refresh` provide a JSON-free path from command selection to a reviewed
+proposal, Evidence application or separately approved Guarded application,
+user-owned commit, parent/child bootstrap, and baseline evidence. A measured
+cost rule keeps short suites on the parent command. Later test discovery or test
+structure changes produce a bounded diff and update only policy that still
+matches Click's prior committed digest lineage. User-owned or modified policy is
+never overwritten, and Click does not run `git add`, `commit`, or `push`. A
+successful bootstrap is setup cost; it reports `sharding-ready /
+reuse-unavailable` until every child has a complete authoritative observation. See
+[automatic sharding setup](skills/click/references/automatic-sharding-setup.md).
+The automatic collector supports bounded unittest discovery and a conservative
+pytest collect-only profile on CPython 3.10 through 3.14. Its common process and
+locking adapters are implemented for Linux, macOS, and Windows; platform-native
+validation status is tracked separately from implementation status.
+
+The [two-project setting-free E2E record](docs/auto-sharding-e2e.md) shows an
+actual Guarded A→B module change, partial child reuse, same-final-code audit,
+and the retained negative whole-request result for short fixtures.
+
+Observer collection is off by default and independent from the dashboard. Use
+`click-gate observer off`, `click-gate observer shadow`,
+`click-gate observer authoritative`, or `click-gate observer status`. Explicit
+`shadow` mode attaches non-authoritative telemetry on its supported Linux,
+macOS, and Windows backends; Shadow predictions never authorize a skipped
+check. Explicit `authoritative` mode is available only inside a separately
+approved Guarded contract for direct CPython 3.12.3 `python -m unittest`
+checks. The Linux strace 6.8, macOS privileged `fs_usage`, and Windows inbox
+ETW profiles have passed native-host authoritative contract and cross-contract
+reuse validation on CPython 3.12.3. The setting-free automatic-sharding E2E
+remains Linux-scoped. Each profile
+prepares an identity-bound native companion from already installed build
+inputs, runs the original check once, and authorizes reuse only for a complete
+signed input snapshot. Click installs nothing or elevates no privilege. See the
+[Authoritative Observer v2 contract](skills/click/references/authoritative-observer-v2.md).
+
+Use `click-gate status` for a compact read-only JSON view of verification
+progress. It distinguishes checks that ran in the current batch, checks reused
+after current-condition requalification, checks that did not run, and checks
+that have not been requested. It also reports which registered checks remain,
+which are valid for the current mutation revision, and which a mutation
+invalidated. This view cannot create reuse authority or complete a task.
+
+During Evidence, approved Guarded work, or read-only review, Click can reuse a
+complete result for one explicit local `cat`, bounded `sed -n`, or supported
+`rg` request. The cache binds the request, cwd, trusted executable, relevant
+environment, file contents, and a conservative directory inventory. Directory
+searches also bind applicable project ignore files, so additions, deletions,
+renames, and ignore changes miss the old entry and run normally. Cached output
+lives only in the owner-readable plugin data directory, expires after 24 hours,
+and never becomes verification evidence. Unsupported commands, ambiguous
+targets, failures, output over 48 KB, missing entries, and corrupt entries use
+the normal read-only runner. For an intentional same-request rerun, use
+`click-gate inspect` with `"fresh":true` in its version 1 request.
+
+Use `click-gate dashboard start`, `status`, or `stop` for actual **verification-group** outcomes, batch history and JSON/standalone HTML exports. Planned, started, reused and unstarted groups are distinct; partial processing measurements, full request wait (unknown when unmeasured), baseline-cost estimates and Shadow remain separate. Run `python3 benchmarks/incremental_verification.py --iterations 3 --warmups 1 --output /tmp/click-comparison.json`, then select that JSON in the viewer for a real hook/runner comparison. Short checks can be slower with runtime overhead. See [measurement scope, mode boundaries and exports](VERIFICATION_EFFICIENCY.md).
+
+An opened dashboard remains attached to the same host session and workspace across successive Evidence tasks. Each verification group is persisted as soon as it finishes, so an already-passed group remains visible while the next group runs and after cancellation. Viewer connectivity does not carry Guarded approval, runner tokens, unfinished commands, or completion authority into the next task. A completed Evidence task may pass real successful results forward as **candidates only**; Click rechecks the exact source and check, workspace and mutation boundary, environment, executable, host coverage, and existing dependency or committed safe-change rules. Equal revision numbers, dashboard history, exports, timing, and Shadow predictions never authorize reuse.
 
 ## Completion receipt
 
@@ -145,7 +243,17 @@ click-gate receipt export
 click-gate receipt verify ./completion-receipt.json
 ~~~
 
-The receipt binds the request lineage, mutation revision, final workspace, checks, environment, executable identity, host coverage, and reuse lineage.
+The receipt binds request lineage, mutation revision, final workspace, checks, environment, executable identity, host coverage, and reuse lineage. Evidence successors use v4; an applied Guarded successor uses v5 with the origin contract, batch, revision, requalification mode and candidate digest. Merely retaining candidates does not select v5. Legacy v1–v4 remain readable; v5 retains complete shard provenance when present.
+
+## Reproduce a completed Guarded A → B workflow
+
+~~~sh
+python3 benchmarks/incremental_verification.py --guarded-workflow --iterations 3 --warmups 1 --workload-rounds 40000 --output /tmp/click-workflow.json --html-output /tmp/click-workflow.html
+~~~
+
+This uses independent real Hook/runner fixtures, not approval in your development session. It compares no Click, explicitly selected Guarded with default reuse settings, and Guarded with precommitted shards/sibling-code policy. Evidence remains the product default mode. The fixed flow includes first run, unrelated/related code, environment change, failure, repair and unchanged retry; every step is audited against the same-state full suite. Warmups, rotating execution order, setup/transition/audit costs and negative timing differences are retained. The offline HTML is the v3 three-configuration report; the existing dashboard importer accepts the older v2 paired report. Neither sample results nor unsigned exports prove universal safety or total development-time savings.
+
+The result-first dashboard shows promises and approval, group outcomes, prior-contract provenance, estimated avoided rerun cost and whether a separate comparison exists. A bounded local display copy of contract summaries is retained; it is not an authority source or guaranteed secret redactor. Shared exports omit contract prose, raw commands, input paths and environment values. Request timing is partial (`hook-entry-to-result-recording`), not the full host wait. [Detailed measurement and privacy boundaries](VERIFICATION_EFFICIENCY.md).
 
 Receipt verification currently reports **unsigned-integrity-only**. It detects accidental or uncoordinated changes to the receipt, but it does not yet prove the publisher's identity.
 
@@ -192,6 +300,7 @@ The README stays short on purpose. Protocol and architecture details live here:
 - [Guarded contract format](skills/click/references/directive-format.md)
 - [Verification profiles](skills/click/references/verification-profiles.md)
 - [Capability protocol](skills/click/references/capability-protocol.md)
+- [Authoritative Observer v2](skills/click/references/authoritative-observer-v2.md), [Shadow Observer v1](skills/click/references/observer-v1.md), [Shadow Intelligence v1](skills/click/references/shadow-intelligence-v1.md), and [Evidence Shards v1](skills/click/references/evidence-shards-v1.md)
 - [Anti-loop policy](skills/click/references/anti-loop-policy.md)
 
 ## License

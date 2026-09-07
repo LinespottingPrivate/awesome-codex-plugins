@@ -1,6 +1,6 @@
 ---
 name: reality-check
-description: 'Compare a claimed state with observable Triggers: "reality check", "is this claim actually done", "compare claim to repo".'
+description: 'Compare a claimed state with observable repository evidence and report concrete gaps. Triggers: "reality check", "is this claim actually done", "compare claim to repo".'
 ---
 # Reality Check
 
@@ -11,6 +11,29 @@ missing behavior with a file, command result, or artifact. Separate:
 - concrete gap;
 - incomplete evidence;
 - changed assumptions.
+
+## Prompt
+
+```text
+Reality-check this claim: PR #1042 finishes the CLI regen migration,
+skills-codex/ generation now runs entirely through `ao gate check`, and
+`scripts/regen-all.sh` is deleted. Compare against agentops-wt/train2-c
+at HEAD. Cite file-by-file evidence for what's confirmed and what's
+still a gap.
+```
+
+## It's working if
+
+Observable in the trace, without reading the prose:
+
+- Every finding cites a file, command result, or artifact inside
+  `.agents/scratch/reality-check/<run-id>/reality-check-report.json`.
+- A completion claim carries a disposition per stated goal, each one of
+  `confirmed`, `concrete gap`, or `unverifiable`.
+- `skills/reality-check/scripts/validate-output.sh` accepts the report
+  with no `verdict`, `readiness`, or `PASS` field present.
+- An untestable line is filed as `incomplete-evidence` with the missing
+  artifact named.
 
 ## Vision-coverage audit
 

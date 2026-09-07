@@ -1,6 +1,6 @@
 ---
 name: bootstrap
-description: 'Initialize explicitly requested, missing Triggers: "bootstrap AgentOps", "initialize AgentOps docs".'
+description: 'Initialize explicitly requested, missing AgentOps documentation and optional verdict storage without taking over repository workflow. Triggers: "bootstrap AgentOps", "initialize AgentOps docs".'
 ---
 # Bootstrap — minimal project setup
 
@@ -19,6 +19,19 @@ requested because a "complete" setup feels more helpful than a minimal one.
 Anti-pattern: inferring product intent from directory names and READMEs to
 avoid asking the caller. Corrective: ask for the missing content; a wrong
 PRODUCT.md written confidently is worse than a question.
+
+## Prompt
+
+```text
+Bootstrap missing AgentOps docs for fleet-router (ao is installed). Create only PRODUCT.md and GOALS.md since they're missing; AGENTS.md already exists, so leave it untouched. Also create .agents/ao/verdicts/sha256/. Report created, skipped, and failed paths.
+```
+
+## It's working if
+
+- The report lists `PRODUCT.md` and `GOALS.md` as created and `AGENTS.md` as skipped because it already exists.
+- A path collision with an existing document, e.g. `AGENTS.md` already present, gets reported as skipped rather than overwritten.
+- `.agents/ao/verdicts/sha256/` gets created only when the caller explicitly requested durable verdict storage.
+- The report ends with created, skipped, and failed paths only, carrying no next action and no `git` command.
 
 ## Procedure
 

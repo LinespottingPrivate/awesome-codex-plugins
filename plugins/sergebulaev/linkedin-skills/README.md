@@ -141,7 +141,7 @@ Every skill shows you a draft first and waits for your OK before doing anything.
 | **Comment Drafter** | Drafts a comment on any LinkedIn post from its URL |
 | **Reply Handler** | Drafts a reply to any comment, correctly handling LinkedIn's 2-level thread flattening |
 | **Post Audit** | Checks your draft against 2026 algorithm rules and AI-detection patterns before you publish |
-| **Humanizer** | Strips em dashes, AI vocabulary ("leverage", "delve", "harness"), rule-of-three lists, and other AI fingerprints. Bundles three sub-tools: AI-emoji density scorer, multi-detector spread tester (GPTZero, Originality.ai, ZeroGPT, Sapling, Copyleaks), and a rule-explainer reference for defending stylistic choices. |
+| **Humanizer** | Removes the AI tells human readers and LinkedIn's slop filter react to: 2026 AI vocabulary scored by paragraph density, reveal bridges, staccato fragment stacks, stacked triads, performed sincerity; caps em dashes instead of banning them. Does not promise to beat detectors (no edit reliably does). Bundles three sub-tools: AI-emoji density scorer, multi-detector spread tester (GPTZero, Originality.ai, ZeroGPT, Sapling, Copyleaks) that documents how much they disagree, and a rule-explainer reference for defending stylistic choices. |
 | **Hook Extractor** | Reverse-engineers the hook formula from any viral post. Returns a blank template you can fill with your own topic |
 | **Content Planner** | Creates a 7-day plan with daily post topics, formats, hooks, posting times, and comment targets |
 | **Engagement Monitor** | Two read-side workflows: (1) tracks your comment threads for author replies and drafts follow-ups in the 6-24h window; (2) pulls likers and commenters on any post and groups them by ICP fit (peer / aspirational / prospect). |
@@ -158,6 +158,14 @@ If you are a founder, the bundle ships a dedicated founder layer. Your real cons
 - **A founders-edition content plan** (Conviction / Building in public / The math / Proof) in the Content Planner.
 
 Just tell the Post Writer you are a founder, or ask the Content Planner for a "founder plan," and the skills reach for these first.
+
+## Community skills
+
+Standalone skills built by other people on this bundle's conventions (same voice rules, same approval-card flow, same `Not for X (use Y)` disambiguation). They live in their authors' repos, so the core stays at 11 skills and one read/write pipeline. Install them next to this bundle the same way.
+
+- [linkedin-outreach](https://github.com/smfardeen7/linkedin-skills/tree/add-linkedin-outreach-skill/skills/linkedin-outreach) by [@smfardeen7](https://github.com/smfardeen7) - drafts 300-character connection-request notes (10 scenario templates) and post-accept follow-up sequences with day offsets and stop rules. Draft-only: LinkedIn has no invite or DM API, you paste and send.
+
+Built one? Open a PR that adds a single line here.
 
 ## Optional: read LinkedIn data with Apify
 
@@ -233,7 +241,7 @@ Setup: drop `PIXFARO_TOKEN=pf_live_...` into your `.env`. The thin client at `li
 
 Every skill follows these rules automatically:
 
-1. No em dashes. Biggest AI tell in 2026.
+1. Em dashes capped at about 1 per 100 words. The character stopped being a tell in 2026; the density is.
 2. Capitalize names. Always. Lowercase reads as disrespectful.
 3. No AI vocabulary: "leverage", "fundamentally", "streamline", "harness", "delve", "unlock", "foster".
 4. Specific numbers beat adjectives. "$14,200" beats "significant savings".

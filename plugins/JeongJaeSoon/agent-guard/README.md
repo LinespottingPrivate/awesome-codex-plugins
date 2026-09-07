@@ -11,14 +11,6 @@ or replacement for GitHub Secret Scanning and Push Protection.
 ## Install in Claude Code
 
 ```text
-/plugin install agent-guard@claude-plugins-official
-/reload-plugins
-```
-
-The official-marketplace command above applies only after Anthropic lists the
-plugin. Until then, install from the project's marketplace:
-
-```text
 /plugin marketplace add JeongJaeSoon/agent-guard
 /plugin install agent-guard@agent-guard
 /reload-plugins
@@ -51,8 +43,14 @@ installing software and requires the published SHA-256 for the selected
 gitleaks archive.
 
 Plugin executions maintain a version-independent sibling path at
-`current/bin/agent-guard`; hook manifests and `setup-shell` use it and can fall
-back to the newest installed version directory after a cache upgrade. Scanner
+`current/bin/agent-guard`; hook manifests and `setup-shell` use it. A healthy
+`current` remains authoritative over merely cached higher versions. If it is
+missing or invalid, the shell resolver can recover only through the newest
+complete semantic-version sibling whose embedded version agrees; it does not
+infer host plugin-registry selection. Existing managed rc blocks embed the
+resolver, so rerun the plugin-local `agent-guard setup-shell` after a resolver
+upgrade (preserving `--no-command-wrapping` when selected), then start a new
+shell and restart Claude Code. Scanner
 infrastructure failures use `AGENT_GUARD_INFRA_FAILURE_MODE=open|closed`
 (`open` by default) and warn once per session. Secret detections always block.
 
@@ -88,9 +86,12 @@ policy, and template-named symlinks are checked against their resolved target.
 Template contents still undergo normal secret scanning on writes.
 
 Default processing is local, ephemeral, and has no telemetry. PII hook handling
-is off by default. Selecting the experimental `http` PII adapter sends
-the text described in [PRIVACY.md](PRIVACY.md) to the user-configured endpoint.
-Compatibility with a specific external service is not guaranteed.
+is off by default. Explicitly selecting the experimental `http` adapter or the
+`pleno` provider sends the text described in [PRIVACY.md](PRIVACY.md) to the
+user-configured endpoint. The generic `http` adapter does not guarantee
+compatibility with any specific service; `pleno` is verified only against the
+pleno-anonymize `/api/redact` contract at upstream commit
+`ba3a14bc125fd6c6eb80aa5b24c22f6b99801126`.
 
 ## Requirements and platforms
 
@@ -121,4 +122,7 @@ gitleaks 8.30 or newer (recommended).
 - [License](LICENSE)
 - [Third-party notices](THIRD_PARTY_NOTICES.md)
 - [Full documentation](https://github.com/JeongJaeSoon/agent-guard#readme)
+- [Verification and troubleshooting](https://github.com/JeongJaeSoon/agent-guard#verification-and-troubleshooting)
+- [Managed deployment](https://github.com/JeongJaeSoon/agent-guard#managed-deployment)
+- [Upgrading older installations](https://github.com/JeongJaeSoon/agent-guard#upgrading-older-installations)
 - [Known limitations](https://github.com/JeongJaeSoon/agent-guard#known-limitations)

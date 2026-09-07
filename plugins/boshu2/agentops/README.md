@@ -10,7 +10,7 @@ the exact change and returns `PASS`, `FAIL`, or `NOT_PROVEN`. The standard
 path is one RPI traversal:
 
 ```text
-RPI -> Plan -> Implement -> fresh Validate -> report and stop
+RPI -> Plan -> Implement -> fresh Validate -> repair to convergence -> report
 ```
 
 ## Quickstart
@@ -22,7 +22,26 @@ npx skills@latest add boshu2/agentops --all -g
 One command installs the skill bundle into every coding agent you use. The
 skills run **inside your coding agent** (Claude Code, Codex, Cursor, …): type
 `/rpi` in that agent's chat, or ask for `plan`, `implement`, `validate`, and
-`learn` by name. No other runtime is required.
+`learn` by name. Most skills need nothing beyond the coding agent; these need
+more:
+
+| Skill | Needs | Why |
+|---|---|---|
+| `rpi` | `python3`, conditional | invokes plan and validate, which may run `python3` (see below); rpi's own procedure only cites `scripts/run_once.py` as reference behavior |
+| `plan` | `python3`, conditional | runs `scripts/validate.py snapshot-intent` only when the intent source is not durable |
+| `validate` | `python3` | its helper commands run `python3` against `scripts/validate.py` |
+| `fitness` | `ao` | its whole procedure is running one `ao goals` subcommand |
+| `using-gc` | `ao` | rig prep runs `ao gc prepare` and `ao gc check` |
+| `handoff` | `ao`, optional | `ao session handoff`/`rehydrate` cover the same artifact; the skill can write it directly |
+| `status` | `ao`, optional | describes `ao status`'s output shape; the report can be read directly from `.agents/ao/` |
+| `reverse-engineer` | `python3` | Phase 1's mechanical teardown runs `scripts/reverse_engineer.py` |
+| `skill-builder` | `python3`, conditional | Create mode's `build.sh` runs `scripts/generate-skill-mesh.py`; heal/check/audit modes are bash-only |
+| `ms` | `python3`, conditional, plus `ms` binary | the MCP-search fallback runs `python3 skills/ms/scripts/mcp-search.py`; the `ms` binary is required for CLI load, write, and admin operations |
+| `toil-mining` | `python3`, conditional | the recent-human extractor runs `scripts/recent_human.py` for Codex JSONL session sources |
+| `security` | `python3`, conditional | the composable suite and offline redteam surfaces run `security_suite.py` when that scan type is selected |
+| `cass` | `python3`, optional | `scripts/prompt_miner.py` mines repeated prompts; one of several selectable Scripts-table entries |
+
+The plugin and `npx skills@latest add boshu2/agentops --all -g` install all 54 skills today, regardless of whether you have `python3` or `ao`.
 
 Ran it? Tell us what it judged. Open an issue, and paste the `verdict.v2` if
 you asked `validate` to persist one:
@@ -117,8 +136,9 @@ exact candidate and evidence.
 
 ## Optional: `ao` CLI
 
-Deterministic checks, inspection, and skill linking. Skip it if you only need
-the skills. Install steps (Homebrew or `go install`), and `ao skills link` for
+Deterministic checks, inspection, and skill linking. `fitness` and
+`using-gc` call it directly; the rest of the skills work without it. Install
+steps (Homebrew or `go install`), and `ao skills link` for
 tracking skills from a local checkout:
 [Install and day-2 operations](docs/install-day2-ops.md#maintainer--contributor-the-ao-binary).
 
@@ -156,14 +176,18 @@ one unless requested.
 
 | Skill | Job |
 |---|---|
-| [`rpi`](skills/rpi/SKILL.md) | run Plan, Implement, and fresh Validate at most once |
+| [`rpi`](skills/rpi/SKILL.md) | run the anti-ceremony guard, then Plan, Implement, and fresh Validate at most once |
+| [`anti-ceremony`](skills/anti-ceremony/SKILL.md) | STOP/CONTINUE guard before Plan: name the consumer, the decision, the defect, and the retirement condition, or do not create the artifact |
 | [`plan`](skills/plan/SKILL.md) | create the bead (BDD + DDD ubiquitous language) |
 | [`implement`](skills/implement/SKILL.md) | TDD against the bead: RED → GREEN → refactor |
 | [`validate`](skills/validate/SKILL.md) | fresh context (optionally different model); optionally persist `verdict.v2` |
 
 Optional later: [`learn`](skills/learn/SKILL.md). Strategies:
 [`council`](skills/council/SKILL.md), [`idea-genie`](skills/idea-genie/SKILL.md),
-[`premortem`](skills/premortem/SKILL.md), [`postmortem`](skills/postmortem/SKILL.md).
+[`premortem`](skills/premortem/SKILL.md), [`postmortem`](skills/postmortem/SKILL.md),
+[`one-way-door`](skills/one-way-door/SKILL.md) (is this decision reversible?),
+[`reality-check`](skills/reality-check/SKILL.md) (does the repo match the claim?).
+Not sure which skill owns a request? Ask [`route`](skills/route/SKILL.md).
 
 ## One skill, many shapes
 

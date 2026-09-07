@@ -81,7 +81,7 @@ The proposals queue is populated mid-session by wave-executor agents calling `no
    }
    ```
 
-   Then iterate `batches` and emit one `AskUserQuestion` per batch. The verbatim template is `agents/memory-proposal-collector.md` § AUQ Question Template — keep the two in step:
+   Then iterate `batches` and emit one `AskUserQuestion` per batch. The verbatim template is `docs/memory-proposal-flow.md` § AUQ Question Template — keep the two in step:
 
    ```javascript
    AskUserQuestion({
@@ -129,7 +129,7 @@ The proposals queue is populated mid-session by wave-executor agents calling `no
 - Relation judgment (step 3b, #1016): `scripts/lib/learnings/candidates.mjs` (`buildCandidatePools`) · `scripts/lib/learnings/judgment.mjs` (`buildJudgmentInput`, `judgeCandidate`, `applyVerdict`, `JUDGMENT_DECISIONS`, `FAILURE_MODES`)
 - CLI: `scripts/memory-propose.mjs` (agents call this)
 - Hook: `hooks/pre-bash-memory-propose-audit.mjs` (audit trail)
-- Coordinator AUQ spec: `agents/memory-proposal-collector.md` (reference doc)
+- Coordinator AUQ spec: `docs/memory-proposal-flow.md` (reference doc)
 - Sibling phases: 3.6.5 Auto-Dream (#502), 3.6.6 Skill-Applied Judge (#645 L3), 3.6.7 Auto-Dialectic (#506)
 - Sibling call site of the same judgment pair: `skills/evolve/SKILL.md` § Step 3.3b (the `/evolve` producer for the `-0.2 if contradicted` branch)
 - Issues: #501 (this phase), #1016 (step 3b)
@@ -246,14 +246,15 @@ After learnings are written (Phase 3.6) and the auto-dream decision is made (Pha
 
 1. Read `dialectic.cadence` (default 5), `dialectic.model` (default haiku), `dialectic.budget-tokens` (default 8000) from `$CONFIG`.
 
-2. Invoke `shouldDispatchAutoDialectic` from `scripts/lib/auto-dialectic.mjs`:
+2. Invoke `decideAndRecordAutoDialectic` from `scripts/lib/auto-dialectic.mjs`:
    ```javascript
-   import { shouldDispatchAutoDialectic } from '${PLUGIN_ROOT}/scripts/lib/auto-dialectic.mjs';
-   const decision = await shouldDispatchAutoDialectic({
+   import { decideAndRecordAutoDialectic } from '${PLUGIN_ROOT}/scripts/lib/auto-dialectic.mjs';
+   const decision = await decideAndRecordAutoDialectic({
      repoRoot: process.cwd(),
      cadence: config.dialectic?.cadence ?? 5,
    });
    ```
+   Same return shape as `shouldDispatchAutoDialectic` (`{trigger, reason, signals}`) — `decideAndRecordAutoDialectic` calls it internally and additionally emits the mechanical `orchestrator.dialectic.nudge_decided` telemetry record on all four return paths (#1200 part c), so the nudge decision is observable without depending on this prose actually reaching step 5/7.
 
 3. If `decision.trigger === false`: log `auto-dialectic: not triggered (${decision.reason})` and continue. Emit no nudge. Do NOT update `.orchestrator/dialectic-last-run`.
 
@@ -291,17 +292,19 @@ After the auto-dialectic nudge decision is made (Phase 3.6.7), and when the reco
 
 1. Read Session Config: `reconcile.enabled` (default `false`), `reconcile['rule-expiry-days']` (default `null` — falls back to per-type TTL in the engine), `reconcile['confidence-floor']` (default `0.5`), `reconcile['min-rule-days']` (default `7` — floor window (days) applied to a proposed rule's `expires-at` so a near-dead or already-elapsed natural expiry never produces a born-dead rule, issue #741.1), `reconcile['min-insight-chars']` (default `24` — opt-in minimum insight length gating the eligibility placeholder-insight check, issue #741.2), `reconcile['max-proposals-per-run']` (default `10` — volume brake, issue #900 D; the engine sorts eligible learnings by confidence DESC and proposes at most this many per run). If `reconcile.enabled` is not `true`, log `reconcile: disabled (reconcile.enabled=false)` and skip all remaining steps.
 
-2. Invoke `runReconcile` from `scripts/lib/reconcile/engine.mjs`:
+2. Invoke `runReconcileAtSessionEnd` from `scripts/lib/reconcile/engine.mjs`:
 
    ```javascript
-   import { runReconcile } from '${PLUGIN_ROOT}/scripts/lib/reconcile/engine.mjs';
-   const { proposals, rejected, summary, error } = await runReconcile({
+   import { runReconcileAtSessionEnd } from '${PLUGIN_ROOT}/scripts/lib/reconcile/engine.mjs';
+   const { proposals, rejected, summary, error } = await runReconcileAtSessionEnd({
      repoRoot: process.cwd(),
      ruleExpiryDays: config.reconcile['rule-expiry-days'] ?? undefined,
      minRuleDays: config.reconcile['min-rule-days'] ?? undefined,
      minInsightChars: config.reconcile['min-insight-chars'] ?? undefined,
      maxProposalsPerRun: config.reconcile['max-proposals-per-run'] ?? undefined,
      now: new Date(),
+     // trigger is pinned to 'session-end' IN CODE by runReconcileAtSessionEnd
+     // (#1201 Part A) — this prose block no longer sets it.
    });
    ```
 
@@ -375,7 +378,14 @@ After the auto-dialectic nudge decision is made (Phase 3.6.7), and when the reco
 
    The batch counter moved out of `header` and into the question because `header` is cut off after 12 characters — `Reconciliation — Confirm Rule Proposals (Batch N of M)` reached the operator as `Reconciliati`. The rendered `content` shown in the description is the rule prose that will land on disk.
 
-6. After all batches are answered, partition proposals into `approved` (any option selected across all batches) and `rejected` (all unselected). Proposals the operator rejected join the engine's `rejected` array for archival.
+6. After all batches are answered, partition proposals into `approved` (any option selected across all batches) and `rejected` (all unselected). Proposals the operator rejected join the engine's `rejected` array for archival — each one STAMPED with an explicit `operatorRejected: true` flag first:
+
+   ```javascript
+   // `declined` = the surfaced proposals the operator left unselected across all batches.
+   const operatorRejected = declined.map((item) => ({ ...item, operatorRejected: true }));
+   ```
+
+   The flag is what `writer.mjs`'s `isOperatorRejection()` keys on to decide whether the item gets a TERMINAL sidecar stamp (#1042). Engine-side rejections (the `rejected` array `runReconcile` returned) MUST NOT be stamped — they carry no flag and stay proposable next run. Without the flag the writer falls back to an implicit content-presence heuristic (deprecated, see `writer.mjs`); do not rely on it in new call sites.
 
 7. Invoke `writeApprovedRules` from `scripts/lib/reconcile/writer.mjs`:
 

@@ -1,6 +1,6 @@
 ---
 name: craft-goal
-description: 'Compile or lint a persistent Mayor-style Triggers: "craft a goal prompt", "mayor goal", "goal-runner prompt", "lint this goal", "is this goal safe". (Shaping one experiment''s intent routes to plan.)'
+description: 'Compile or lint a persistent Mayor-style goal prompt that ratchets a bead graph through bounded RPI experiments toward one larger outcome. Triggers: "craft a goal prompt", "mayor goal", "goal-runner prompt", "lint this goal", "is this goal safe". (Shaping one experiment''s intent routes to plan.)'
 ---
 # Craft Goal
 
@@ -12,7 +12,7 @@ ratchets toward a larger outcome.
 ```text
 Goal / Mayor: observe graph → choose bounded wave → consume verdicts → ratchet
   └─ Bead: durable experiment intent, context, scratch, evidence, and links
-       └─ RPI: plan → implement → fresh validate → verdict → report and stop
+       └─ RPI: plan → implement → fresh validate → bounded repair → verdict → report
             └─ Implementation: one RED → GREEN → refactor experiment
 ```
 

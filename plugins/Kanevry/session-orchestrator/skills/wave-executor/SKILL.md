@@ -188,6 +188,10 @@ Each entry's `status` is initialized to `planned`. session-end Phase 3.2 (Docs V
 
 Read and follow `wave-loop.md` in this skill directory for the complete wave execution loop, including agent dispatch, output review, plan adaptation, progress updates, and scope manifest creation.
 
+Since #1157 that file is a 39-line INDEX and the loop body lives in three files under `references/`. **Its own table is the routing table** — read it there, not here: it carries a `Read WHEN` column stating at which moment each file is due, which is the half a copy loses. Two of the three steps are marked **MANDATORY-BEFORE-DISPATCH**; skipping either dispatches the wave unguarded and the failure is SILENT — no error, no ledger entry, indistinguishable from a clean run.
+
+Turn budget, `maxTurns`, and stagnation recovery are unmoved: `circuit-breaker.md`. Every `wave-loop.md § …` citation elsewhere in this file resolves into one of the three sub-files.
+
 ### Mission-Status Updates (#340)
 
 The coordinator (you) is responsible for updating per-task mission status in STATE.md as tasks progress through the wave. Use `setMissionStatus(stateContent, taskId, status)` from `scripts/lib/state-md.mjs` and write the result back to STATE.md immediately.
@@ -249,7 +253,7 @@ Each agent prompt MUST include:
 3. **Acceptance criteria**: measurable definition of done
 4. **Rule references**: the wave's applicable rules are injected automatically as the `<APPLICABLE-RULES>` block produced by `scripts/print-applicable-rules.mjs` (see `wave-loop.md` § "Pre-Dispatch: Glob-Scoped Rule Injection (#336/#694)"). The block is computed once per wave from the wave's `allowedPaths` and prepended to every agent prompt — do not hand-copy rule paths into the prompt. Past **learnings** arrive separately as the `<LEARNINGS-INDEX>` block from `scripts/print-learnings-index.mjs` (see `wave-loop.md` § "Pre-Dispatch: Learnings-Index Injection (#1014)"), computed **per agent** from its own file scope rather than once per wave.
 5. **Testing expectation** (need-gated): "Before writing any test, name the concrete bug a NEW test would catch that the existing suite does not. No nameable bug → write NO test and report `no-tests-needed: <reason>` — that is a SUCCESS outcome, not a gap. With a nameable bug: exactly one test for it. Running existing tests is always mandatory."
-6. **Commit instruction**: "Do NOT commit. The coordinator handles commits."
+6. **Commit instruction**: "Do NOT commit. The coordinator handles commits. Never `git stash`, `git add`, `git checkout --` or `git reset` either (PSA-007) — to compare against the pre-change state, read `git show HEAD:<path>` (or `git show <sha>:<path>`); it never touches the shared index." Measured 2026-09-02: two agents in one wave reached for `git stash` to build a baseline; both recovered, both were the same shape.
 7. **Turn limit**: Include the maxTurns instruction from `circuit-breaker.md`
 8. **Verification before completion**: Before claiming any task done, run the verification command and quote the evidence inline. See `.claude/rules/verification-before-completion.md`.
 
@@ -294,7 +298,7 @@ Analyzer-only learning types, including `autonomy-verdict`, are intentionally no
 
 **Audit trail:** the `hooks/pre-bash-memory-propose-audit.mjs` hook logs every CLI invocation to `.orchestrator/metrics/events.jsonl` with the value of `--insight` / `--subject` / `--evidence` redacted (privacy-by-default).
 
-Cross-reference: PRD F2.1 / issue #501 / `agents/memory-proposal-collector.md` (coordinator-side AUQ rendering reference doc) / `scripts/lib/memory-proposals/{schema,store,collector,sink}.mjs` (the modules).
+Cross-reference: PRD F2.1 / issue #501 / `docs/memory-proposal-flow.md` (coordinator-side AUQ rendering reference doc) / `scripts/lib/memory-proposals/{schema,store,collector,sink}.mjs` (the modules).
 
 ## Session Type Behavior
 
@@ -323,6 +327,16 @@ End with a single commit summarizing all housekeeping work.
 - Up to 10-18 agents per wave (read from Session Config)
 - Extra emphasis on Discovery role and Quality role
 - May include security audits, performance profiling, architecture refactoring
+
+### Ultradeep Profile (`session-profile: ultradeep`)
+
+Not a fourth session type — a PROFILE over `session-type: deep`, resolved from the `/session ultradeep` argument alias (`commands/session.md`). Everything below applies only when STATE.md frontmatter carries `session-profile: ultradeep`; every other behaviour in this skill is unchanged, because downstream still reads `deep`. Full spec — wave table, mandatory artefacts, cost model: `docs/prd/2026-09-06-ultradeep-session-profile.md`.
+
+- **7 waves**, per `skills/session-plan/SKILL.md` § Role-to-Wave Mapping: Research+Code-Discovery → Synthesis-Gate → Impl-Core → Impl-Polish → Review-Panel → Quality → Release/Finalization.
+- **Wave 2 is coordinator-direct and dispatches ZERO agents.** Make NO `Agent()` call in this wave. The coordinator consolidates wave 1 into `docs/audits/<YYYY-MM-DD>-<slug>.md`, updates STATE.md, and asks ONE **blocking** `AskUserQuestion` (confirm scope / narrow / abort) per `.claude/rules/ask-via-tool.md`. Wave 3 does not start until that question is answered — this is the one gate the profile exists for, so a silent "no tasks, skip it" is a defect, not an optimisation (`skills/session-plan/SKILL.md` § Empty roles, coordinator-direct exception).
+- **`max-turns` per ROLE, not per session:** 40 for Research/Code-Discovery (wave 1), 25 for the implementing waves (3, 4, and the writing part of 6/7), 15 for Release/Finalization. Set it on the dispatch; the Session Config `max-turns` value is the fallback when a role has no entry here.
+- **Web tools are role-bound.** Research agents in wave 1 receive `WebSearch` and `WebFetch`. **No write-capable agent may receive them** — not in wave 1's Code-Discovery half, and not in any later wave. The grant follows the READ-ONLY property, so the pairing "has Write/Edit" + "has WebSearch/WebFetch" must never occur in a single dispatch. Research findings carry URL + retrieval date, the web analogue of the PSA-006 evidence rule (`.claude/rules/parallel-sessions.md`).
+- **Budgets are not implemented.** The PRD's `ultradeep.max-*` block (§ 7) is deferred until three runs have been measured (HR-105: no threshold without a firing rate). Nothing reads such a key today — do not invent one, and do not gate a wave on it.
 
 ## Error Recovery
 
